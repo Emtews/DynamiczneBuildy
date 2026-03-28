@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamiczne Buildy | Elden Ring</title>
+    <!-- Zaktualizowane, bardziej mroczne i epickie czcionki (dodany standardowy Cinzel dla logo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* --- ZMIENNE KOLORYSTYCZNE (Mroczniejszy Elden Bling) --- */
+        :root {
+            --bg-dark: #050505;
+            --bg-panel: #0d0d0f;
+            --gold-primary: #d4af37;
+            --gold-glow: #f3e5ab;
+            --text-main: #dcdcdc;
+            --text-muted: #8c8c8c;
+            --border-gold: 1px solid #7a6332;
+        }
+
+        /* --- STYLE GLOBALNE --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1a1a1f 0%, var(--bg-dark) 80%),
+                linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8));
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, .elden-font {
+            font-family: 'Cinzel Decorative', serif;
+            font-weight: 700;
+            color: var(--gold-primary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* --- NAGŁÓWEK (HEADER) --- */
+        header {
+            text-align: center;
+            padding: 80px 20px 50px;
+            position: relative;
+            background: linear-gradient(to bottom, rgba(13,13,15,0.9), transparent);
+            border-bottom: 1px solid #222;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 1px;
+            background: var(--gold-primary);
+            box-shadow: 0 0 15px 1px var(--gold-glow);
+        }
+
+        h1.main-title {
+            font-family: 'Cinzel', serif; /* Klasyczny serif bez zawijasów, identyczny jak baza z gry */
+            font-size: 5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            
+            /* Efekt metalicznego, wypukłego złota z obrazka */
+            background: linear-gradient(
+                to bottom, 
+                #fcf6e3 0%,    /* Jasny, biało-złoty szczyt litery */
+                #d4af37 25%,   /* Główne złoto */
+                #7a5818 50%,   /* Ciemniejsze zagięcie */
+                #140b02 75%,   /* Bardzo głęboki, niemal czarny cień wewnątrz litery */
+                #a88431 100%   /* Dolne odbicie światła na krawędzi */
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: var(--gold-primary); /* Fallback dla starych przeglądarek */
+            
+            /* Ciemny kontur krawędzi i podwójny, potężny cień 3D */
+            -webkit-text-stroke: 1.5px #140b02;
+            filter: 
+                drop-shadow(0px 8px 3px rgba(0, 0, 0, 0.9)) 
+                drop-shadow(0px 0px 30px rgba(212, 175, 55, 0.3));
+            
+            /* Delikatne rozciągnięcie w pionie, by litery były wysmukłe jak w logo ER */
+            transform: scaleY(1.15);
+            display: block;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.4rem;
+            font-style: italic;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* --- GŁÓWNA ZAWARTOŚĆ --- */
+        main {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        /* --- FILTRY KATEGORII --- */
+        .filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 50px;
+        }
+
+        .filter-btn {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid #333;
+            padding: 10px 25px;
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .filter-btn:hover::before {
+            left: 100%;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--gold-primary);
+            color: var(--gold-glow);
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+            background-color: rgba(212, 175, 55, 0.05);
+        }
+
+        /* --- SIATKA BUILDÓW --- */
+        .build-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 35px;
+        }
+
+        .build-card {
+            background-color: var(--bg-panel);
+            border: 1px solid #2a2a2a;
+            border-radius: 2px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .build-card::before {
+            content: '';
+            position: absolute;
+            top: 4px; left: 4px; right: 4px; bottom: 4px;
+            border: 1px solid #333;
+            pointer-events: none;
+            transition: border-color 0.4s ease;
+        }
+
+        .build-card:hover {
+            transform: translateY(-8px);
+            border-color: #554422;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 25px rgba(212, 175, 55, 0.15);
+        }
+
+        .build-card:hover::before {
+            border-color: var(--gold-primary);
+        }
+
+        .build-category {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: inline-block;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .build-card:hover .build-category {
+            color: var(--gold-primary);
+            border-color: var(--gold-primary);
+        }
+
+        .build-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #eeeeee;
+        }
+
+        .build-card:hover .build-title {
+            color: var(--gold-glow);
+        }
+
+        .build-desc {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        .read-more {
+            color: var(--gold-primary);
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+
+        /* --- MODAL (OKNO ZE SZCZEGÓŁAMI BUILDU) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--bg-panel);
+            border: var(--border-gold);
+            width: 100%;
+            max-width: 850px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(30px) scale(0.98);
+            transition: all 0.4s ease;
+            box-shadow: 0 0 50px rgba(0,0,0,1), 0 0 20px rgba(212, 175, 55, 0.15);
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #554422;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            color: var(--text-muted);
+            font-size: 2.5rem;
+            cursor: pointer;
+            line-height: 1;
+            background: none;
+            border: none;
+            font-family: 'Cinzel Decorative', serif;
+            transition: color 0.3s ease;
+            z-index: 10;
+        }
+
+        .close-btn:hover {
+            color: var(--gold-glow);
+            text-shadow: 0 0 10px var(--gold-primary);
+        }
+
+        .modal-header {
+            padding: 40px 50px;
+            background: linear-gradient(180deg, #1a1a1f 0%, var(--bg-panel) 100%);
+            border-bottom: 1px solid #2a2a2a;
+            position: relative;
+        }
+
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 5%;
+            width: 90%;
+            height: 1px;
+            background: radial-gradient(circle, var(--gold-primary) 0%, transparent 100%);
+        }
+
+        .modal-body {
+            padding: 40px 50px;
+        }
+
+        /* Statystyki w Modalu */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin: 25px 0 40px;
+            background: #080808;
+            padding: 20px;
+            border: 1px solid #222;
+            border-radius: 2px;
+        }
+
+        .stat-box {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 15px;
+            border-bottom: 1px dotted #333;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .stat-name { color: var(--text-muted); font-family: 'Cinzel Decorative', serif; font-size: 0.9rem;}
+        .stat-value { color: var(--gold-primary); font-weight: bold; font-family: 'Cinzel Decorative', serif; font-size: 1.2rem;}
+
+        /* Sekcje Ekwipunku */
+        .gear-section {
+            margin-bottom: 35px;
+        }
+        
+        .gear-section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 10px;
+            color: var(--gold-glow);
+        }
+
+        .gear-list {
+            list-style: none;
+        }
+
+        .gear-list li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.01);
+            padding: 10px 10px 10px 30px;
+            border-left: 2px solid #333;
+        }
+
+        .gear-list li::before {
+            content: '❖';
+            color: var(--gold-primary);
+            position: absolute;
+            left: 10px;
+            font-size: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .gear-label {
+            color: var(--gold-primary);
+            font-style: italic;
+            margin-right: 8px;
+        }
+
+        /* --- POSTANOWIENIE RADY (EASTER EGG) --- */
+        .decree-container {
+            margin: 80px auto 20px;
+            max-width: 900px;
+            background: linear-gradient(180deg, rgba(20, 5, 5, 0.8) 0%, var(--bg-dark) 100%);
+            border: 1px solid #3a1111;
+            border-top: 2px solid #ff4444;
+            border-bottom: 2px solid #ff4444;
+            padding: 40px 50px;
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.05);
+            text-align: center;
+            position: relative;
+        }
+        
+        .decree-title {
+            font-family: 'Cinzel', serif;
+            color: #ff4444;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
+        }
+        
+        .decree-text {
+            font-family: 'Cormorant Garamond', serif;
+            color: #dcdcdc;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        /* --- STOPKA --- */
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid #1a1a1f;
+            color: #444;
+            font-size: 1rem;
+            margin-top: 60px;
+            font-family: 'Cinzel Decorative', serif;
+        }
+
+        /* --- RESPONSYWNOŚĆ --- */
+        @media (max-width: 768px) {
+            h1.main-title { font-size: 2.5rem; }
+            .modal-header, .modal-body { padding: 25px; }
+            .stats-container { grid-template-columns: repeat(2, 1fr); }
+            .filter-btn { width: 45%; text-align: center; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 class="main-title">Dynamiczne Buildy</h1>
+        <p class="subtitle">
+            Eksperckie kompendium najbardziej zoptymalizowanych buildów do Elden Ring. Skrupulatnie przetestowane i dostosowane do aktualnej mety.
+            <span style="display: block; margin-top: 15px; font-size: 1.2rem; font-weight: 700; color: #ff4444; opacity: 1; text-shadow: 0 0 12px rgba(255, 0, 0, 0.4);">
+                UWAGA: Matematycznie niemożliwe jest przejście DLC z zerowym poziomem błogosławieństwa.
+            </span>
+        </p>
+    </header>
+
+    <main>
+        <!-- Przyciski filtrowania -->
+        <div class="filters" id="filters">
+            <button class="filter-btn active" data-filter="all">Wszystkie</button>
+            <button class="filter-btn" data-filter="sila">Siła (Str)</button>
+            <button class="filter-btn" data-filter="zrecznosc">Zręczność (Dex)</button>
+            <button class="filter-btn" data-filter="magia">Magia (Int)</button>
+            <button class="filter-btn" data-filter="wiara">Wiara (Fai)</button>
+            <button class="filter-btn" data-filter="arkana">Arkana (Arc)</button>
+        </div>
+
+        <div class="build-grid" id="build-grid">
+            <!-- Karty generowane dynamicznie przez JavaScript -->
+        </div>
+
+        <!-- POSTANOWIENIE RADY MAĆKÓW -->
+        <div class="decree-container">
+            <h3 class="decree-title">POSTANOWIENIE RADY MAĆKÓW Z DNIA 28.03.2026</h3>
+            <p class="decree-text">
+                -po zapoznaniu się z materiałami audiowizualnymi, w których to wymieniony wielokrotnie streamer Intekk, nie chciał usunąć zapisu z nielegalnego przejścia gry Elden Ring Rada Maćków postanowiła:<br><br>
+                Ukarać użytkownika a za razem naszego przewodniczącego znanego szerzej jako zwycięzca redbulla, znany w kręgu mistrza jungler oraz poranny strimer afisher, Rada Maćków skazuje go na 47 lat grzywny lub 2500zł aresztu
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <p style="font-style: italic; color: var(--gold-primary); margin-bottom: 15px; font-size: 1.4rem; text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);">"Nikt nie bije tyle co dynamic..."</p>
+        <p>&copy; 2026 Dynamiczne Buildy. Powstań, Zmatowieńcu.</p>
+    </footer>
+
+    <!-- MODAL (Ukryte okno ze szczegółami) -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <button class="close-btn" id="close-modal">&times;</button>
+            
+            <div class="modal-header">
+                <div class="build-category" id="modal-category">Kategoria</div>
+                <h2 id="modal-title" style="font-size: 2.5rem; margin: 10px 0;">Tytuł Buildu</h2>
+                <p class="subtitle" id="modal-desc" style="text-align: left; font-size: 1.2rem;"></p>
+            </div>
+            
+            <div class="modal-body">
+                <h3>Docelowe Statystyki (Poziom 150)</h3>
+                <div class="stats-container" id="modal-stats"></div>
+
+                <div class="gear-section">
+                    <h3>Uzbrojenie & Pancerz</h3>
+                    <ul class="gear-list" id="modal-weapons"></ul>
+                </div>
+
+                <div class="gear-section">
+                    <h3>Talizmany & Fizyk</h3>
+                    <ul class="gear-list" id="modal-talismans"></ul>
+                </div>
+
+                <div class="gear-section">
+                    <h3>Strategia & Mechanika działania</h3>
+                    <p id="modal-strategy" style="color: var(--text-main); font-size: 1.2rem;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // BAZA DANYCH OP BUILDÓW Z REDDITA (ZAKTUALIZOWANA O METĘ)
+        const buildsData = [
+            {
+                id: 1,
+                title: "Wirujące Ostrza Krwi",
+                category: "Zręczność / Arkana",
+                filterTag: "arkana",
+                shortDesc: "Najszybszy DPS w grze. Dwa zakrzywione miecze z Seppuku topią bossów w sekundy dzięki pasywnym buffom do obrażeń wielokrotnych.",
+                stats: { vig: 60, min: 15, end: 30, str: 14, dex: 14, int: 9, fai: 15, arc: 72 },
+                weapons: [
+                    { label: "Prawa ręka", name: "Scavenger's Curved Sword (Okultystyczny / Occult)" },
+                    { label: "Lewa ręka", name: "Scavenger's Curved Sword lub Bandit's Curved Sword (Okultystyczny)" },
+                    { label: "Popioły Wojny", name: "Seppuku na obu broniach" },
+                    { label: "Pancerz", name: "Biała Maska (White Mask) + Pióra Czarnego Ptaka (Raptor's Black Feathers)" }
+                ],
+                talismans: [
+                    "Lord of Blood's Exultation (+20% Dmg przy krwawieniu)",
+                    "Claw Talisman (Wzmocnienie ataków z wyskoku)",
+                    "Rotten Winged Sword Insignia (Buff przy kolejnych hitach)",
+                    "Millicent's Prosthesis (Więcej Dex i dodatkowy buff do serii ataków)",
+                    "Flask: Thorny Cracked Tear + Greenburst Cracked Tear"
+                ],
+                strategy: "Złote dziecko Reddita na 'No-hit boss melter'. Przed wejściem na arenę użyj Seppuku najpierw na lewej, a potem na prawej broni. Użyj inkantacji Flame, Grant Me Strength. Twoim jedynym atakiem w walce jest rozbieg, podskok i użycie przycisku L1 (Dual Wield Attack). Ta kombinacja uderza wroga 4 razy w ułamku sekundy, natychmiast nakładając potężne krwawienie i stackując maksymalnie buffy z talizmanów."
+            },
+            {
+                id: 2,
+                title: "Nieustępliwy Paladyn",
+                category: "Siła / Wiara",
+                filterTag: "wiara",
+                shortDesc: "Powszechnie uznawany za najlepszą broń PVE w całej grze. Taker's Flames zrzuca wrogów na ziemię i leczy Cię z każdym hitem.",
+                stats: { vig: 60, min: 25, end: 30, str: 40, dex: 15, int: 9, fai: 60, arc: 9 },
+                weapons: [
+                    { label: "Prawa ręka", name: "Blasphemous Blade (Bluźniercze Ostrze)" },
+                    { label: "Lewa ręka", name: "Erdtree Seal (Pieczęć Złotego Drzewa)" },
+                    { label: "Pancerz", name: "Haligtree Knight Set lub Crucible Axe Set" }
+                ],
+                talismans: [
+                    "Shard of Alexander (Potężny buff do umiejętności L2)",
+                    "Fire Scorpion Charm (Buff do obrażeń od ognia)",
+                    "Dragoncrest Greatshield Talisman (Dla redukcji obrażeń fizycznych)",
+                    "Carian Filigreed Crest lub Ritual Sword Talisman",
+                    "Flask: Flame-Shrouding Cracked Tear + Opaline Hardtear"
+                ],
+                strategy: "Buffujesz się Golden Vow oraz Flame, Grant Me Strength. W walce po prostu używasz umiejętności specjalnej broni (L2 - Taker's Flames). Fala ognia leci bardzo daleko, zadaje absurdalne obrażenia od ognia, wywraca humanoidalnych przeciwników (w tym Malenię) i leczy Cię za znaczny procent maksymalnego HP za każdego trafionego wroga. Build, który wybacza wszystkie błędy."
+            },
+            {
+                id: 3,
+                title: "Księżycowy Król",
+                category: "Magia (Int)",
+                filterTag: "magia",
+                shortDesc: "Dark Moon Greatsword to magia w czystej postaci. Gwarantuje masywne obrażenia od postawy (Poise) bez zużywania many na każdy cios.",
+                stats: { vig: 60, min: 30, end: 30, str: 16, dex: 12, int: 80, fai: 7, arc: 9 },
+                weapons: [
+                    { label: "Prawa ręka", name: "Dark Moon Greatsword (Wielki Miecz Mrocznego Księżyca)" },
+                    { label: "Lewa ręka", name: "Carian Regal Scepter" },
+                    { label: "Pancerz", name: "Spellblade Set (Zestaw Rogiera - każda część wzmacnia magiczne ataki z broni)" }
+                ],
+                talismans: [
+                    "Godfrey Icon (Wzmacnia naładowane ataki promieniami)",
+                    "Shard of Alexander",
+                    "Magic Scorpion Charm",
+                    "Axe Talisman (Wzmacnia naładowane R2)",
+                    "Flask: Magic-Shrouding Cracked Tear + Spiked Cracked Tear (więcej obrażeń z R2)"
+                ],
+                strategy: "Najbardziej energooszczędny mag. Używasz L2, aby nałożyć na miecz buff z Księżycowego Światła (kosztuje FP tylko raz na 60 sekund). Od tego momentu Twoje mocne ataki (R2) wystrzeliwują potężne, darmowe promienie magii. Nakładają one odmrożenie (Frostbite) i zdejmują gigantyczne wartości z paska 'Stagger' przeciwnika, co chwilę rzucając bossów na kolana do ataku krytycznego."
+            },
+            {
+                id: 4,
+                title: "Łamacz Postawy",
+                category: "Czysta Siła",
+                filterTag: "sila",
+                shortDesc: "Star Fists. Najbardziej opresyjny build na walkę w zwarciu. Łamie Poise bossów szybciej niż jakakolwiek inna broń.",
+                stats: { vig: 60, min: 15, end: 40, str: 80, dex: 12, int: 9, fai: 15, arc: 7 },
+                weapons: [
+                    { label: "Dwie ręce", name: "Star Fist (Gwiezdne Pięści) - Wariant Ciężki (Heavy)" },
+                    { label: "Popiół Wojny", name: "Cragblade (Ostrze Skaliste) - nakładane przed walką" },
+                    { label: "Pancerz", name: "Bull-Goat Set (Dla maksymalnego Poise) lub Omen Set" }
+                ],
+                talismans: [
+                    "Axe Talisman (Kluczowy: +10% do naładowanych R2)",
+                    "Lord of Blood's Exultation (Star Fisty nakładają krwawienie domyślnie)",
+                    "Ritual Sword Talisman",
+                    "Dragoncrest Greatshield Talisman",
+                    "Flask: Stonebarb Cracked Tear + Spiked Cracked Tear"
+                ],
+                strategy: "Speedrunnerzy i no-hitterzy z Reddita kochają Star Fisty. Nakładasz Cragblade dla dodatkowych obrażeń i niszczenia postawy. Twoim celem jest przyklejenie się do bossa i używanie wyłącznie *naładowanych* mocnych ataków (Charged R2). Ze względu na niewiarygodnie krótką animację ładowania, jesteś w stanie wcisnąć ten atak pomiędzy ciosami bossów. Dwa lub trzy takie ciosy ogłuszają prawie każdego wroga w grze."
+            },
+            {
+                id: 5,
+                title: "Niezniszczalna Ściana",
+                category: "Siła / Arkana (Shield Poke)",
+                filterTag: "sila",
+                shortDesc: "Tak zwany 'Easy Mode'. Build na wielką tarczę i dźganie włócznią zza gardy. Jesteś dosłownie nietykalny.",
+                stats: { vig: 50, min: 15, end: 50, str: 48, dex: 14, int: 9, fai: 15, arc: 45 },
+                weapons: [
+                    { label: "Lewa ręka", name: "Fingerprint Stone Shield (Wielka Tarcza Kamiennego Odcisku)" },
+                    { label: "Prawa ręka", name: "Mohgwyn's Sacred Spear lub Antspur Rapier (Z trucizną)" },
+                    { label: "Pancerz", name: "Najcięższy pancerz na jaki Cię stać przy Medium Rollu (np. Lionel)" }
+                ],
+                talismans: [
+                    "Greatshield Talisman (Zwiększa stabilność tarczy - nie tracisz staminy przy blokowaniu)",
+                    "Spear Talisman (Zwiększa kontrobobrażenia z pchnięć)",
+                    "Lord of Blood's Exultation",
+                    "Pearl Shield Talisman (Z DLC, opcjonalnie) lub Erdtree's Favor +2",
+                    "Flask: Greenburst Cracked Tear + Opaline Hardtear"
+                ],
+                strategy: "Trzymasz przycisk bloku (L1). Nigdy go nie puszczasz. Gdy boss w Ciebie bije, Ty po prostu wciskasz R1 (zwykły atak). Twoja postać dźga włócznią zza tarczy bez opuszczania gardy. Przeciwnik odbija się od tarczy jak od ściany, a włócznia Mohga szybko nakłada potężne krwawienie, które go zabija. Koniec filozofii."
+            },
+            {
+                id: 6,
+                title: "Potwór Krwawego Biesa (DLC)",
+                category: "Siła / Arkana",
+                filterTag: "arkana",
+                shortDesc: "Złamana broń z dodatku Shadow of the Erdtree. Naładowany ciężki atak potrafi wywołać krwawienie na bossie w jednym uderzeniu.",
+                stats: { vig: 60, min: 15, end: 35, str: 54, dex: 11, int: 9, fai: 15, arc: 80 },
+                weapons: [
+                    { label: "Dwie ręce", name: "Bloodfiend's Arm (Ramię Krwawego Biesa) - Wariant Krwawy (Blood)" },
+                    { label: "Popiół Wojny", name: "Royal Knight's Resolve (Królewska Determinacja Rycerza)" },
+                    { label: "Pancerz", name: "Rakshasa Set (lub dowolny dający ochronę)" }
+                ],
+                talismans: [
+                    "Axe Talisman (Dla Charged R2)",
+                    "Lord of Blood's Exultation",
+                    "Two-Handed Sword Talisman (Nowy talizman z DLC)",
+                    "Outer God Heirloom (lub dowolny defensywny)",
+                    "Flask: Spiked Cracked Tear + Deflecting Hardtear (Sekiro Tear)"
+                ],
+                strategy: "Bloodfiend's Arm po modyfikacji na 'Blood' ma absurdalnie wysoki wskaźnik nakładania krwawienia na ciężkim ataku ze względu na ukryty AoE (obszarowy) rozprysk krwi przy uderzeniu o ziemię. Używasz Royal Knight's Resolve dla buffa x1.8 do następnego ciosu. Ładujesz R2, uderzasz bossa - tracą oni połowę paska zdrowia od fizycznego trafienia + natychmiastowej eksplozji krwawienia. Prawdopodobnie zostanie wkrótce znerfiony."
+            }
+        ];
+
+        // --- GENEROWANIE KART NA STRONIE ---
+        const gridElement = document.getElementById('build-grid');
+
+        function renderBuilds(filter = 'all') {
+            gridElement.innerHTML = ''; 
+
+            buildsData.forEach(build => {
+                if (filter !== 'all' && build.filterTag !== filter) return;
+
+                const card = document.createElement('div');
+                card.className = 'build-card';
+                card.innerHTML = `
+                    <div class="build-category">${build.category}</div>
+                    <h2 class="build-title">${build.title}</h2>
+                    <p class="build-desc">${build.shortDesc}</p>
+                    <div class="read-more">Przestudiuj build <span style="font-size: 1.2rem;">→</span></div>
+                `;
+                
+                card.addEventListener('click', () => openModal(build));
+                gridElement.appendChild(card);
+            });
+        }
+
+        // --- OBSŁUGA MODALA ---
+        const modal = document.getElementById('modal');
+        const closeModalBtn = document.getElementById('close-modal');
+
+        function openModal(build) {
+            document.getElementById('modal-category').innerText = build.category;
+            document.getElementById('modal-title').innerText = build.title;
+            document.getElementById('modal-desc').innerText = build.shortDesc;
+            
+            const statsHtml = `
+                <div class="stat-box"><span class="stat-name">Vigor</span> <span class="stat-value">${build.stats.vig}</span></div>
+                <div class="stat-box"><span class="stat-name">Mind</span> <span class="stat-value">${build.stats.min}</span></div>
+                <div class="stat-box"><span class="stat-name">Endurance</span> <span class="stat-value">${build.stats.end}</span></div>
+                <div class="stat-box"><span class="stat-name">Strength</span> <span class="stat-value">${build.stats.str}</span></div>
+                <div class="stat-box"><span class="stat-name">Dexterity</span> <span class="stat-value">${build.stats.dex}</span></div>
+                <div class="stat-box"><span class="stat-name">Intelligence</span> <span class="stat-value">${build.stats.int}</span></div>
+                <div class="stat-box"><span class="stat-name">Faith</span> <span class="stat-value">${build.stats.fai}</span></div>
+                <div class="stat-box"><span class="stat-name">Arcane</span> <span class="stat-value">${build.stats.arc}</span></div>
+            `;
+            document.getElementById('modal-stats').innerHTML = statsHtml;
+
+            const weaponsHtml = build.weapons.map(w => 
+                `<li><span class="gear-label">${w.label}:</span> <span style="color:var(--text-main)">${w.name}</span></li>`
+            ).join('');
+            document.getElementById('modal-weapons').innerHTML = weaponsHtml;
+
+            const talismansHtml = build.talismans.map(t => 
+                `<li><span style="color:var(--text-main)">${t}</span></li>`
+            ).join('');
+            document.getElementById('modal-talismans').innerHTML = talismansHtml;
+
+            document.getElementById('modal-strategy').innerText = build.strategy;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // --- OBSŁUGA FILTRÓW ---
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filterValue = btn.getAttribute('data-filter');
+                renderBuilds(filterValue);
+            });
+        });
+
+        // INICJALIZACJA
+        renderBuilds('all');
+
+    </script>
+</body>
+</html>
