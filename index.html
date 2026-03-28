@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamiczne Buildy | Elden Ring</title>
-    <!-- Zaktualizowane, bardziej mroczne i epickie czcionki (dodany standardowy Cinzel dla logo) -->
+    <!-- Zaktualizowane, bardziej mroczne i epickie czcionki -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         /* --- ZMIENNE KOLORYSTYCZNE (Mroczniejszy Elden Bling) --- */
@@ -61,42 +61,85 @@
             bottom: -1px;
             left: 50%;
             transform: translateX(-50%);
-            width: 300px;
+            width: 400px;
             height: 1px;
-            background: var(--gold-primary);
-            box-shadow: 0 0 15px 1px var(--gold-glow);
+            background: radial-gradient(circle, var(--gold-primary) 0%, transparent 100%);
+            box-shadow: 0 0 20px 2px rgba(212, 175, 55, 0.4);
+        }
+
+        .title-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-top: 10px;
         }
 
         h1.main-title {
-            font-family: 'Cinzel', serif; /* Klasyczny serif bez zawijasów, identyczny jak baza z gry */
-            font-size: 5rem;
+            position: relative;
+            font-family: 'Cinzel', serif;
+            font-size: 5.5rem;
             font-weight: 700;
-            margin-bottom: 25px;
-            letter-spacing: 8px;
+            letter-spacing: 10px;
             text-transform: uppercase;
+            margin: 0;
+            padding: 0;
+            line-height: 1.1;
             
-            /* Efekt metalicznego, wypukłego złota z obrazka */
+            /* Baza tekstu (twardy, ciemny kontur i podwójny cień dla głębi) */
+            color: transparent; 
+            -webkit-text-stroke: 1.5px #110802; 
+            filter: 
+                drop-shadow(0px 3px 1px #050301)
+                drop-shadow(0px 8px 10px rgba(0,0,0,0.9))
+                drop-shadow(0px 0px 30px rgba(212, 175, 55, 0.2));
+            
+            transform: scaleY(1.2);
+            display: block;
+        }
+
+        /* WARSTWA 1: Dokładnie zsamplowane kolory z oryginalnego logo */
+        h1.main-title::before {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(
-                to bottom, 
-                #fcf6e3 0%,    /* Jasny, biało-złoty szczyt litery */
-                #d4af37 25%,   /* Główne złoto */
-                #7a5818 50%,   /* Ciemniejsze zagięcie */
-                #140b02 75%,   /* Bardzo głęboki, niemal czarny cień wewnątrz litery */
-                #a88431 100%   /* Dolne odbicie światła na krawędzi */
+                to bottom,
+                #ebe1c5 0%,      /* Jasna górna krawędź (kość) */
+                #8e6e3d 22%,     /* Ciemniejące górne złoto */
+                #bca065 42%,     /* Rozjaśnienie przed refleksem */
+                #fdf8e2 48%,     /* OŚLEPIAJĄCY, CIENKI REFLEKS ŚWIATŁA */
+                #090501 50%,     /* TWARDE, CZARNE ODCĘCIE (środek) */
+                #090501 51%,     /* Grubość pęknięcia */
+                #2a1908 58%,     /* Gęsty cień pod pęknięciem */
+                #7c5c2d 85%,     /* Dolne, brudne złoto */
+                #c9ab6f 100%     /* Dolny refleks świetlny na krawędzi */
             );
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            color: var(--gold-primary); /* Fallback dla starych przeglądarek */
-            
-            /* Ciemny kontur krawędzi i podwójny, potężny cień 3D */
-            -webkit-text-stroke: 1.5px #140b02;
-            filter: 
-                drop-shadow(0px 8px 3px rgba(0, 0, 0, 0.9)) 
-                drop-shadow(0px 0px 30px rgba(212, 175, 55, 0.3));
-            
-            /* Delikatne rozciągnięcie w pionie, by litery były wysmukłe jak w logo ER */
-            transform: scaleY(1.15);
-            display: block;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* WARSTWA 2: Tekstura brudu/metalu (szum SVG nałożony na złoto) */
+        h1.main-title::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            /* Generator ziarna, by litery nie były gładkie jak plastik */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            mix-blend-mode: overlay; /* Wtapia teksturę w gradient poniżej */
+            opacity: 0.65; /* Siła zabrudzenia/chropowatości */
+            pointer-events: none;
+            z-index: 3;
         }
 
         .subtitle {
@@ -232,6 +275,53 @@
             align-items: center;
             gap: 8px;
             font-weight: 700;
+        }
+
+        /* --- SUGEROWANY BUILD --- */
+        .featured-build {
+            background-color: #110e08;
+            border: 1px solid var(--gold-primary);
+            border-radius: 2px;
+            padding: 40px 30px;
+            margin-bottom: 60px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 5px 25px rgba(212, 175, 55, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .featured-build:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold-glow);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 10px 35px rgba(212, 175, 55, 0.25);
+            background-color: #16120a;
+        }
+
+        .featured-badge {
+            color: var(--gold-glow);
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--gold-primary);
+            padding-bottom: 5px;
+            display: inline-block;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        
+        .featured-build .build-title {
+            font-size: 2.5rem;
+        }
+        
+        .featured-build .build-desc {
+            max-width: 800px;
+            margin: 0 auto 25px auto;
+            font-size: 1.2rem;
         }
 
         /* --- MODAL (OKNO ZE SZCZEGÓŁAMI BUILDU) --- */
@@ -441,8 +531,13 @@
 </head>
 <body>
 
+    <!-- KONTENER NA ZŁOTE LIŚCIE -->
+    <div id="grace-particles"></div>
+
     <header>
-        <h1 class="main-title">Dynamiczne Buildy</h1>
+        <div class="title-wrapper">
+            <h1 class="main-title" data-text="Dynamiczne Buildy">Dynamiczne Buildy</h1>
+        </div>
         <p class="subtitle">
             Eksperckie kompendium najbardziej zoptymalizowanych buildów do Elden Ring. Skrupulatnie przetestowane i dostosowane do aktualnej mety.
             <span style="display: block; margin-top: 15px; font-size: 1.2rem; font-weight: 700; color: #ff4444; opacity: 1; text-shadow: 0 0 12px rgba(255, 0, 0, 0.4);">
@@ -452,6 +547,15 @@
     </header>
 
     <main>
+        <!-- SUGEROWANY BUILD -->
+        <div class="featured-build" id="featured-build">
+            <div class="featured-badge">✦ Sugerowany Build ✦</div>
+            <div class="build-category">Zręczność / Arkana (Kontra)</div>
+            <h2 class="build-title">wykałaczekk</h2>
+            <p class="build-desc">Mistrzowski taniec z Krwawą Helisą. Wykorzystuje absurdalne ilości i-frames i niszczycielskie obrażenia z pchnięć po uniku.</p>
+            <div class="read-more" style="justify-content: center;">Przestudiuj build <span style="font-size: 1.2rem;">→</span></div>
+        </div>
+
         <!-- Przyciski filtrowania -->
         <div class="filters" id="filters">
             <button class="filter-btn active" data-filter="all">Wszystkie</button>
@@ -488,40 +592,47 @@
             
             <div class="modal-header">
                 <div class="build-category" id="modal-category">Kategoria</div>
-                <h2 id="modal-title" style="font-size: 2.5rem; margin: 10px 0;">Tytuł Buildu</h2>
-                <p class="subtitle" id="modal-desc" style="text-align: left; font-size: 1.2rem;"></p>
+                <h2 id="modal-title" style="font-size: 2.8rem; margin: 10px 0 20px 0; color: #f3e5ab;">Tytuł Buildu</h2>
+                <div class="elden-separator"></div>
+                <p class="subtitle" id="modal-desc" style="text-align: left; font-size: 1.25rem; margin-top: 20px;"></p>
             </div>
             
             <div class="modal-body">
-                <h3>Docelowe Statystyki (Poziom 150)</h3>
-                <div class="stats-container" id="modal-stats"></div>
+                <div class="gear-section">
+                    <h3 style="border:none; margin-bottom:10px;">Docelowe Statystyki (Poziom 150)</h3>
+                    <div class="elden-separator" style="margin-bottom: 15px; width: 100%;"></div>
+                    <div class="stats-container" id="modal-stats"></div>
+                </div>
 
                 <div class="gear-section">
-                    <h3>Uzbrojenie & Pancerz</h3>
+                    <h3 style="border:none; margin-bottom:10px;">Uzbrojenie & Pancerz</h3>
+                    <div class="elden-separator" style="margin-bottom: 15px; width: 100%;"></div>
                     <ul class="gear-list" id="modal-weapons"></ul>
                 </div>
 
                 <div class="gear-section">
-                    <h3>Talizmany & Fizyk</h3>
+                    <h3 style="border:none; margin-bottom:10px;">Talizmany & Fizyk</h3>
+                    <div class="elden-separator" style="margin-bottom: 15px; width: 100%;"></div>
                     <ul class="gear-list" id="modal-talismans"></ul>
                 </div>
 
                 <div class="gear-section">
-                    <h3>Strategia & Mechanika działania</h3>
-                    <p id="modal-strategy" style="color: var(--text-main); font-size: 1.2rem;"></p>
+                    <h3 style="border:none; margin-bottom:10px;">Strategia & Mechanika działania</h3>
+                    <div class="elden-separator" style="margin-bottom: 15px; width: 100%;"></div>
+                    <p id="modal-strategy" style="color: var(--text-main); font-size: 1.25rem; line-height: 1.8; margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;"></p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // BAZA DANYCH OP BUILDÓW Z REDDITA (ZAKTUALIZOWANA O METĘ)
+        // DATABÁZA OP BUILDOV Z REDDITU
         const buildsData = [
             {
                 id: 1,
                 title: "Wirujące Ostrza Krwi",
                 category: "Zręczność / Arkana",
-                filterTag: "arkana",
+                filterTags: ["arkana", "zrecznosc"],
                 shortDesc: "Najszybszy DPS w grze. Dwa zakrzywione miecze z Seppuku topią bossów w sekundy dzięki pasywnym buffom do obrażeń wielokrotnych.",
                 stats: { vig: 60, min: 15, end: 30, str: 14, dex: 14, int: 9, fai: 15, arc: 72 },
                 weapons: [
@@ -543,7 +654,7 @@
                 id: 2,
                 title: "Nieustępliwy Paladyn",
                 category: "Siła / Wiara",
-                filterTag: "wiara",
+                filterTags: ["wiara", "sila"],
                 shortDesc: "Powszechnie uznawany za najlepszą broń PVE w całej grze. Taker's Flames zrzuca wrogów na ziemię i leczy Cię z każdym hitem.",
                 stats: { vig: 60, min: 25, end: 30, str: 40, dex: 15, int: 9, fai: 60, arc: 9 },
                 weapons: [
@@ -564,7 +675,7 @@
                 id: 3,
                 title: "Księżycowy Król",
                 category: "Magia (Int)",
-                filterTag: "magia",
+                filterTags: ["magia"],
                 shortDesc: "Dark Moon Greatsword to magia w czystej postaci. Gwarantuje masywne obrażenia od postawy (Poise) bez zużywania many na każdy cios.",
                 stats: { vig: 60, min: 30, end: 30, str: 16, dex: 12, int: 80, fai: 7, arc: 9 },
                 weapons: [
@@ -585,7 +696,7 @@
                 id: 4,
                 title: "Łamacz Postawy",
                 category: "Czysta Siła",
-                filterTag: "sila",
+                filterTags: ["sila"],
                 shortDesc: "Star Fists. Najbardziej opresyjny build na walkę w zwarciu. Łamie Poise bossów szybciej niż jakakolwiek inna broń.",
                 stats: { vig: 60, min: 15, end: 40, str: 80, dex: 12, int: 9, fai: 15, arc: 7 },
                 weapons: [
@@ -606,7 +717,7 @@
                 id: 5,
                 title: "Niezniszczalna Ściana",
                 category: "Siła / Arkana (Shield Poke)",
-                filterTag: "sila",
+                filterTags: ["sila", "arkana"],
                 shortDesc: "Tak zwany 'Easy Mode'. Build na wielką tarczę i dźganie włócznią zza gardy. Jesteś dosłownie nietykalny.",
                 stats: { vig: 50, min: 15, end: 50, str: 48, dex: 14, int: 9, fai: 15, arc: 45 },
                 weapons: [
@@ -627,7 +738,7 @@
                 id: 6,
                 title: "Potwór Krwawego Biesa (DLC)",
                 category: "Siła / Arkana",
-                filterTag: "arkana",
+                filterTags: ["sila", "arkana"],
                 shortDesc: "Złamana broń z dodatku Shadow of the Erdtree. Naładowany ciężki atak potrafi wywołać krwawienie na bossie w jednym uderzeniu.",
                 stats: { vig: 60, min: 15, end: 35, str: 54, dex: 11, int: 9, fai: 15, arc: 80 },
                 weapons: [
@@ -642,18 +753,81 @@
                     "Outer God Heirloom (lub dowolny defensywny)",
                     "Flask: Spiked Cracked Tear + Deflecting Hardtear (Sekiro Tear)"
                 ],
-                strategy: "Bloodfiend's Arm po modyfikacji na 'Blood' ma absurdalnie wysoki wskaźnik nakładania krwawienia na ciężkim ataku ze względu na ukryty AoE (obszarowy) rozprysk krwi przy uderzeniu o ziemię. Używasz Royal Knight's Resolve dla buffa x1.8 do następnego ciosu. Ładujesz R2, uderzasz bossa - tracą oni połowę paska zdrowia od fizycznego trafienia + natychmiastowej eksplozji krwawienia. Prawdopodobnie zostanie wkrótce znerfiony."
+                strategy: "Bloodfiend's Arm po modyfikacji na 'Blood' ma absurdalnie wysoki wskaźnik nakładania krwawienia na ciężkim ataku ze względu na ukryty AoE (obszarowy) rozprysk krwi przy uderzeniu o ziemię. Używasz Royal Knight's Resolve dla buffa x1.8 do następnego ciosu. Ładujesz R2, uderzasz bossa - tracą oni połowę paska zdrowia od fizycznego trafienia + natychmiastowej eksplozji krwawienia."
+            },
+            {
+                id: 7,
+                title: "wykałaczekk",
+                category: "Zręczność / Arkana (Kontra)",
+                filterTags: ["arkana", "zrecznosc"],
+                shortDesc: "Mistrzowski taniec z Krwawą Helisą. Wykorzystuje absurdalne ilości i-frames i niszczycielskie obrażenia z pchnięć po uniku.",
+                stats: { vig: 60, min: 15, end: 25, str: 16, dex: 35, int: 9, fai: 15, arc: 55 },
+                weapons: [
+                    { label: "Prawa ręka", name: "Bloody Helice (Krwawa Helisa)" },
+                    { label: "Lewa ręka", name: "Dragon Communion Seal (Do buffów z Arkana)" },
+                    { label: "Pancerz", name: "Sanguine Noble Set (dla klimatu) lub White Mask + ciężki pancerz" }
+                ],
+                talismans: [
+                    "Spear Talisman (Kluczowy: +15% do obrażeń od pchnięć z kontrataku)",
+                    "Lord of Blood's Exultation",
+                    "Shard of Alexander",
+                    "Two-Handed Sword Talisman (jeśli trzymasz oburącz) lub Erdtree's Favor +2",
+                    "Flask: Thorny Cracked Tear + Greenburst Cracked Tear"
+                ],
+                strategy: "Ten build to kwintesencja bycia nietykalnym. Zamiast tradycyjnych przewrotów (rolli), do unikania ataków bossa używasz umiejętności Dynast's Finesse (L2), która daje Ci więcej klatek nieśmiertelności i odsuwa Cię bezpiecznie do tyłu. Od razu po uniku wciskasz mocny atak (R2), wykonując błyskawiczne, mordercze pchnięcie w przód. W Elden Ring pchnięcia trafiające bossa, który jest w trakcie animacji ataku, zadają tzw. Pierce Counter Damage. W połączeniu z Talizmanem Włóczni i szybkim nakładaniem krwawienia (Bleed), każdy taki kontratak zdejmuje ogromne płaty paska zdrowia wroga."
+            },
+            {
+                id: 8,
+                title: "Snajper Złotej Stolicy",
+                category: "Czysta Zręczność (Dex)",
+                filterTags: ["zrecznosc"],
+                shortDesc: "Zmień Elden Ring w strzelankę. Użyj starożytnej włóczni jako karabinu snajperskiego i niszcz wrogów z bezpiecznego dystansu.",
+                stats: { vig: 60, min: 25, end: 25, str: 20, dex: 80, int: 9, fai: 15, arc: 7 },
+                weapons: [
+                    { label: "Prawa ręka", name: "Bolt of Gransax (Piorun Gransaxa)" },
+                    { label: "Lewa ręka", name: "Jellyfish Shield (Tarcza Meduzy - dla darmowego buffa +20% dmg)" },
+                    { label: "Pancerz", name: "Twój ulubiony Elden Bling (nie ma znaczenia)" }
+                ],
+                talismans: [
+                    "Godfrey Icon (+15% do w pełni naładowanych skilli)",
+                    "Shard of Alexander (+15% do obrażeń ze skilli)",
+                    "Lightning Scorpion Charm (+12% do obrażeń od błyskawic)",
+                    "Ritual Sword Talisman (+10% dmg przy pełnym pasku zdrowia)",
+                    "Flask: Lightning-Shrouding Cracked Tear + darmowa mana lub staminia"
+                ],
+                strategy: "Przed walką użyj umiejętności Tarczy Meduzy, by zyskać darmowy bonus do obrażeń. Następnie stań na drugim końcu areny, przytrzymaj L2 (Ancient Lightning Spear) na Piorunie Gransaxa, aż postać w pełni naładuje rzut, i wyceluj w bossa. Ten build zadaje absurdalne obrażenia od błyskawic z dystansu, na który bossowie często w ogóle nie reagują (lub ich ataki nie dosięgają Ciebie). Idealny sposób na łatwe przechodzenie trudnych etapów gry."
+            },
+            {
+                id: 9,
+                title: "Zwinny Ogar (Kieł)",
+                category: "Zręczność / Jakość",
+                filterTags: ["zrecznosc", "sila"],
+                shortDesc: "Ulubiona broń społeczności. Potężne ataki z wyskoku, wbudowane krwawienie i najładniejszy unik w grze na przycisku L2.",
+                stats: { vig: 60, min: 15, end: 30, str: 35, dex: 60, int: 9, fai: 15, arc: 9 },
+                weapons: [
+                    { label: "Prawa ręka", name: "Bloodhound's Fang (Kieł Ogarosławnika)" },
+                    { label: "Buff broni", name: "Bloodflame Blade (Ostrze Krwawego Płomienia - inkantacja nakładana na miecz)" },
+                    { label: "Pancerz", name: "Raptor's Black Feathers (Pióra Czarnego Ptaka - do ataków z wyskoku)" }
+                ],
+                talismans: [
+                    "Claw Talisman (Wzmocnienie ataków w skoku)",
+                    "Shard of Alexander",
+                    "Lord of Blood's Exultation",
+                    "Dragoncrest Greatshield Talisman",
+                    "Flask: Greenburst Cracked Tear + Stonebarb Cracked Tear"
+                ],
+                strategy: "Nakładasz Bloodflame Blade na miecz przed walką, by drastycznie zwiększyć przyrost krwawienia. W walce używasz głównie silnych ataków w skoku (często łamią postawę bossa) oraz umiejętności Bloodhound's Finesse (L2). Pierwsza część tej umiejętności uderza i natychmiast odrzuca Cię w tył (idealne do unikania ataków). Jeśli po tym wciśniesz silny atak (R2), Twoja postać teleportuje się z powrotem do bossa (Bloodhound's Step) i uderza ponownie, zadając gigantyczne obrażenia. Zyskujesz mnóstwo i-frames (nieśmiertelności) podczas całego tego tańca."
             }
         ];
 
-        // --- GENEROWANIE KART NA STRONIE ---
+        // --- GENEROVANIE KARIET NA STRÁNKE ---
         const gridElement = document.getElementById('build-grid');
 
         function renderBuilds(filter = 'all') {
             gridElement.innerHTML = ''; 
 
             buildsData.forEach(build => {
-                if (filter !== 'all' && build.filterTag !== filter) return;
+                if (filter !== 'all' && !build.filterTags.includes(filter)) return;
 
                 const card = document.createElement('div');
                 card.className = 'build-card';
@@ -730,6 +904,50 @@
 
         // INICJALIZACJA
         renderBuilds('all');
+
+        // --- OBSŁUGA SUGEROWANEGO BUILDU ---
+        const featuredBuildBtn = document.getElementById('featured-build');
+        if (featuredBuildBtn) {
+            featuredBuildBtn.addEventListener('click', () => {
+                // Znajdź build "wykałaczekk" po ID (7)
+                const featuredData = buildsData.find(b => b.id === 7);
+                if (featuredData) openModal(featuredData);
+            });
+        }
+
+        // --- EFEKT SPADAJĄCYCH LIŚCI ZŁOTEGO DRZEWA ---
+        function createGraceParticles() {
+            const container = document.getElementById('grace-particles');
+            
+            // Zabezpieczenie przed błędem null
+            if (!container) return; 
+
+            const particleCount = 40; // Ilość drobinek
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'grace-particle';
+                
+                // Losowe ułożenie w poziomie
+                particle.style.left = Math.random() * 100 + 'vw';
+                
+                // Losowy czas opadania (od 12 do 25 sekund)
+                particle.style.animationDuration = (Math.random() * 13 + 12) + 's';
+                
+                // Losowe opóźnienie, żeby nie spadały wszystkie na raz
+                particle.style.animationDelay = (Math.random() * 20) + 's';
+                
+                // Losowa wielkość łaski
+                const size = Math.random() * 3 + 1.5;
+                particle.style.width = size + 'px';
+                particle.style.height = (size * 1.5) + 'px';
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Uruchomienie efektu
+        createGraceParticles();
 
     </script>
 </body>
