@@ -321,15 +321,15 @@
         .featured-build .build-desc {
             max-width: 800px;
             margin: 0 auto 25px auto;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
+            color: var(--text-main);
         }
 
-        /* --- MODAL (OKNO ZE SZCZEGÓŁAMI BUILDU) --- */
+        /* --- MODAL (EKRAN STATUSU W GRZE) --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0, 0, 0, 0.9);
-            display: flex;
+            background-color: rgba(0, 0, 0, 0.92);
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -599,7 +599,7 @@
             
             <div class="modal-body">
                 <div class="gear-section">
-                    <h3 style="border:none; margin-bottom:10px;">Docelowe Statystyki (Poziom 150)</h3>
+                    <h3 id="modal-stats-title" style="border:none; margin-bottom:10px;">Docelowe Statystyki (Poziom 150)</h3>
                     <div class="elden-separator" style="margin-bottom: 15px; width: 100%;"></div>
                     <div class="stats-container" id="modal-stats"></div>
                 </div>
@@ -739,6 +739,7 @@
                 title: "Potwór Krwawego Biesa (DLC)",
                 category: "Siła / Arkana",
                 filterTags: ["sila", "arkana"],
+                level: 150,
                 shortDesc: "Złamana broń z dodatku Shadow of the Erdtree. Naładowany ciężki atak potrafi wywołać krwawienie na bossie w jednym uderzeniu.",
                 stats: { vig: 60, min: 15, end: 35, str: 54, dex: 11, int: 9, fai: 15, arc: 80 },
                 weapons: [
@@ -760,29 +761,28 @@
                 title: "wykałaczekk",
                 category: "Zręczność / Arkana (Kontra)",
                 filterTags: ["arkana", "zrecznosc"],
-                shortDesc: "Mistrzowski taniec z Krwawą Helisą. Wykorzystuje absurdalne ilości i-frames i niszczycielskie obrażenia z pchnięć po uniku.",
-                stats: { vig: 60, min: 15, end: 25, str: 16, dex: 35, int: 9, fai: 15, arc: 55 },
+                level: 148,
+                shortDesc: "Ekstremalny taniec z Krwawą Helisą. Build typu 'Glass Cannon' oparty na Małym Ciężarze, nieskończonych unikach i niszczycielskich kontrach z pchnięć.",
+                stats: { vig: 30, min: 10, end: 35, str: 17, dex: 70, int: 10, fai: 10, arc: 65 },
                 weapons: [
                     { label: "Prawa ręka", name: "Bloody Helice (Krwawa Helisa)" },
-                    { label: "Lewa ręka", name: "Dragon Communion Seal (Do buffów z Arkana)" },
-                    { label: "Pancerz", name: "Sanguine Noble Set (dla klimatu) lub White Mask + ciężki pancerz" }
+                    { label: "Pancerz", name: "Hełm Lwa Radahna + Nagolenniki Rakshasy (Klatka i ręce puste!)" },
+                    { label: "Udźwig", name: "Mały ciężar (Light Roll)" }
                 ],
                 talismans: [
-                    "Spear Talisman (Kluczowy: +15% do obrażeń od pchnięć z kontrataku)",
-                    "Lord of Blood's Exultation",
-                    "Shard of Alexander",
-                    "Two-Handed Sword Talisman (jeśli trzymasz oburącz) lub Erdtree's Favor +2",
-                    "Flask: Thorny Cracked Tear + Greenburst Cracked Tear"
+                    "Pieczęć Radagona od Bólu (Radagon's Soreseal)",
+                    "Talizman Pióra Tygla (Crucible Feather Talisman)",
+                    "Krzyżowe Drzewo Odwetu (Retaliatory Crossed-Tree) z DLC",
+                    "Zielony Bursztynowy Medalion +3 (Viridian Amber Medallion +3) z DLC"
                 ],
-                strategy: "Ten build to kwintesencja bycia nietykalnym. Zamiast tradycyjnych przewrotów (rolli), do unikania ataków bossa używasz umiejętności Dynast's Finesse (L2), która daje Ci więcej klatek nieśmiertelności i odsuwa Cię bezpiecznie do tyłu. Od razu po uniku wciskasz mocny atak (R2), wykonując błyskawiczne, mordercze pchnięcie w przód. W Elden Ring pchnięcia trafiające bossa, który jest w trakcie animacji ataku, zadają tzw. Pierce Counter Damage. W połączeniu z Talizmanem Włóczni i szybkim nakładaniem krwawienia (Bleed), każdy taki kontratak zdejmuje ogromne płaty paska zdrowia wroga."
+                strategy: "Build dla najtwardszych weteranów nie uznających kompromisów. Zastosowanie Pióra Tygla i Pieczęci Radagona oznacza, że otrzymujesz gigantyczne obrażenia od każdego ciosu. Rekompensuje to jednak Mały Ciężar (Light Roll) i ogromna ilość klatek nieśmiertelności (i-frames). Unikasz ciosów tańcząc z umiejętnością Helisy (L2) po arenie, a Talizman Krzyżowego Drzewa drastycznie wzmacnia uderzenie odwetowe z pchnięcia."
             },
             {
                 id: 8,
                 title: "Snajper Złotej Stolicy",
                 category: "Czysta Zręczność (Dex)",
                 filterTags: ["zrecznosc"],
-                shortDesc: "Zmień Elden Ring w strzelankę. Użyj starożytnej włóczni jako karabinu snajperskiego i niszcz wrogów z bezpiecznego dystansu.",
-                stats: { vig: 60, min: 25, end: 25, str: 20, dex: 80, int: 9, fai: 15, arc: 7 },
+                level: 150,
                 weapons: [
                     { label: "Prawa ręka", name: "Bolt of Gransax (Piorun Gransaxa)" },
                     { label: "Lewa ręka", name: "Jellyfish Shield (Tarcza Meduzy - dla darmowego buffa +20% dmg)" },
@@ -852,15 +852,19 @@
             document.getElementById('modal-title').innerText = build.title;
             document.getElementById('modal-desc').innerText = build.shortDesc;
             
+            // Dynamiczny poziom
+            const levelToDisplay = build.level ? build.level : 150;
+            document.getElementById('modal-stats-title').innerText = `Docelowe Statystyki (Poziom ${levelToDisplay})`;
+            
             const statsHtml = `
-                <div class="stat-box"><span class="stat-name">Vigor</span> <span class="stat-value">${build.stats.vig}</span></div>
-                <div class="stat-box"><span class="stat-name">Mind</span> <span class="stat-value">${build.stats.min}</span></div>
-                <div class="stat-box"><span class="stat-name">Endurance</span> <span class="stat-value">${build.stats.end}</span></div>
-                <div class="stat-box"><span class="stat-name">Strength</span> <span class="stat-value">${build.stats.str}</span></div>
-                <div class="stat-box"><span class="stat-name">Dexterity</span> <span class="stat-value">${build.stats.dex}</span></div>
-                <div class="stat-box"><span class="stat-name">Intelligence</span> <span class="stat-value">${build.stats.int}</span></div>
-                <div class="stat-box"><span class="stat-name">Faith</span> <span class="stat-value">${build.stats.fai}</span></div>
-                <div class="stat-box"><span class="stat-name">Arcane</span> <span class="stat-value">${build.stats.arc}</span></div>
+                <div class="stat-box"><span class="stat-name">Witalność</span> <span class="stat-value">${build.stats.vig}</span></div>
+                <div class="stat-box"><span class="stat-name">Umysł</span> <span class="stat-value">${build.stats.min}</span></div>
+                <div class="stat-box"><span class="stat-name">Wytrzymałość</span> <span class="stat-value">${build.stats.end}</span></div>
+                <div class="stat-box"><span class="stat-name">Siła</span> <span class="stat-value">${build.stats.str}</span></div>
+                <div class="stat-box"><span class="stat-name">Zręczność</span> <span class="stat-value">${build.stats.dex}</span></div>
+                <div class="stat-box"><span class="stat-name">Inteligencja</span> <span class="stat-value">${build.stats.int}</span></div>
+                <div class="stat-box"><span class="stat-name">Wiara</span> <span class="stat-value">${build.stats.fai}</span></div>
+                <div class="stat-box"><span class="stat-name">Mistycyzm</span> <span class="stat-value">${build.stats.arc}</span></div>
             `;
             document.getElementById('modal-stats').innerHTML = statsHtml;
 
